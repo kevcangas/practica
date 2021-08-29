@@ -1,13 +1,20 @@
-
-
 import numpy as np
 import math
 
-def der(entradas,pesos,h): #Derivada
-    for i in range(len(entradas)):
-        pesos[i] = pesos[i] + h
+def ferror(entradas,pesos,salidaDeseada): #Derivada
+    a = (1/2)*(f_activacion(entradas,pesos)-salidaDeseada)**2
+    return a
+
+def der_x(h,entradas,pesos,salidaDeseada): #Derivada
+    pesosa=[0,0]
+    pesosb=[0,0]
+
+    pesosa[0] = pesos[0]+h
+    pesosa[1] = pesos[1]+h
+    pesosb[0] = pesos[0]-h
+    pesosb[1] = pesos[1]-h
     
-    a = (f_activacion(entradas,pesos) - f_activacion(entradas,pesos))/(2*h)
+    a = (ferror(entradas,pesosa,salidaDeseada) - ferror(entradas,pesosb,salidaDeseada))/(2*h)
     return a
 
 def entrenamiento(pesosIniciales, entradas, salidaDeseada, salidaReal,\
@@ -17,7 +24,7 @@ def entrenamiento(pesosIniciales, entradas, salidaDeseada, salidaReal,\
     pesosNuevos = [0,0]
 
     if(conexion == 0):
-        error = salidaReal * (1 - salidaReal) * (salidaDeseada - salidaReal)
+        error = der_x(0.1,entradas,pesosIniciales,salidaDeseada)
         
     else:
         error = salidaReal * (1 - salidaReal) * (pesoConexion * error)
@@ -106,7 +113,3 @@ ent = [a,b]
 
 c = f_activacion(ent,w3)
 print(c)
-         
-        
-
-
