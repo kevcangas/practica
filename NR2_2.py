@@ -1,36 +1,23 @@
 import numpy as np
 import math
 
-def ferror(entradas,pesos,salidaDeseada): #Derivada
-    a = (1/2)*(f_activacion(entradas,pesos)-salidaDeseada)**2
-    return a
-
-def der_x(h,entradas,pesos,salidaDeseada): #Derivada
-    pesosa=[0,0]
-    pesosb=[0,0]
-
-    pesosa[0] = pesos[0]+h
-    pesosa[1] = pesos[1]+h
-    pesosb[0] = pesos[0]-h
-    pesosb[1] = pesos[1]-h
-    
-    a = (ferror(entradas,pesosa,salidaDeseada) - ferror(entradas,pesosb,salidaDeseada))/(2*h)
-    return a
-
 def entrenamiento(pesosIniciales, entradas, salidaDeseada, salidaReal,\
     alpha, conexion, error, pesoConexion):
     
     iteracionesI = len(entradas)
     pesosNuevos = [0,0]
-
-    if(conexion == 0):
-        error = der_x(0.1,entradas,pesosIniciales,salidaDeseada)
         
-    else:
+    if(conexion==1):
         error = salidaReal * (1 - salidaReal) * (pesoConexion * error)
     
     for i in range(iteracionesI):
-        pesosNuevos[i] = pesosIniciales[i]+alpha*entradas[i]*error
+
+        a = entradas[i]*math.exp(-1*entradas[i]*pesosIniciales[i])\
+            *f_activacion(entradas,pesosIniciales)*f_activacion(entradas,pesosIniciales)
+
+        a = a-salidaDeseada
+        
+        pesosNuevos[i] = pesosIniciales[i]+alpha*a
 
     return pesosNuevos,error
 
@@ -41,7 +28,7 @@ def f_activacion(entradas,pesos):
     for i in range(a):
         salida = salida + entradas[i] * pesos[i]
     
-    salida = 1/(1+math.exp(-salida))
+    salida = 1/(1+math.exp(-1*salida))
     
     return salida
 
